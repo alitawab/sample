@@ -1,7 +1,9 @@
+"""model for order"""
 from app.extensions import db
 
 
 class Order(db.Model):
+    """class for order"""
     __tablename__ = 'order'
 
     order_id = db.Column(db.Integer, primary_key=True, autoincrement=True)

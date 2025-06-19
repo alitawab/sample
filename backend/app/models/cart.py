@@ -1,7 +1,9 @@
+"""model cart"""
 from app.extensions import db
 
 
 class Cart(db.Model):
+    """function for cart"""
     __tablename__ = 'cart'
 
     cart_id = db.Column(db.Integer, primary_key=True, autoincrement=True)

@@ -1,7 +1,9 @@
+"""menu item model"""
 from app.extensions import db
 
 
 class MenuItem(db.Model):
+    """menu item function"""
     __tablename__ = 'menu_item'
 
     menuitem_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
