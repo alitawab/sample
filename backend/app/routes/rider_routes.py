@@ -2,8 +2,11 @@
 from flask import Blueprint, request, jsonify
 from app.models import Rider
 from app.extensions import db
+from app.schemas.rider_schema import RiderSchema
+from marshmallow import ValidationError
 
 rider_bp = Blueprint('rider', __name__)
+rider_schema = RiderSchema()
 
 @rider_bp.route('/', methods=['GET'])
 def get_riders():
@@ -24,13 +27,18 @@ def get_riders():
 def create_rider():
     """function to create new rider"""
     data = request.get_json()
+    try:
+        valid_data = rider_schema.load(data)
+    except ValidationError as err:
+        return jsonify(err.messages),400
+
     new_rider = Rider (
-        name = data['name'],
-        phone = data['phone'],
-        vehicle_type = data['vehicle_type'],
-        current_location_lat = data['current_location_lat'],
-        current_location_lng = data['current_location_lng'],
-        is_available = data['is_available'],
+        name = valid_data['name'],
+        phone = valid_data['phone'],
+        vehicle_type = valid_data['vehicle_type'],
+        current_location_lat = valid_data['current_location_lat'],
+        current_location_lng = valid_data['current_location_lng'],
+        is_available = valid_data['is_available'],
     )
     db.session.add(new_rider)
     return jsonify({'message':'rider created successfuly'}),201

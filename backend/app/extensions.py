@@ -6,3 +6,9 @@ from flask_migrate import Migrate
 db=SQLAlchemy()
 cors=CORS()
 migrate = Migrate()
+
+
+# decorators vs closures
+# iterators vs generators
+# comprehensions
+# tuple

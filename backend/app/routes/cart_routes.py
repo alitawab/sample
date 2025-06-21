@@ -1,9 +1,12 @@
 """cart routes"""
 from flask import Blueprint, request, jsonify
+from marshmallow import ValidationError
 from app.models import Cart
 from app.extensions import db
+from app.schemas.cart_schema import CartSchema
 
 cart_bp = Blueprint('cart', __name__)
+cart_schema = CartSchema()
 
 @cart_bp.route('/', methods=['GET'])
 def get_carts():
@@ -19,9 +22,13 @@ def get_carts():
 def create_cart():
     """function to create new cart"""
     data = request.get_json()
+    try:
+        valid_data = cart_schema.load(data)
+    except ValidationError as err:
+        return (err.messages), 400
     new_cart = Cart (
-        user_id = data['user_id'],
-        status = data['status'],
+        user_id = valid_data['user_id'],
+        status = valid_data['status'],
     )
     db.session.add(new_cart)
     return jsonify({'message':'cart created successfuly'}),201

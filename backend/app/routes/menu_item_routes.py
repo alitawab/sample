@@ -1,9 +1,12 @@
 """menuitem routes"""
 from flask import Blueprint, request, jsonify
+from marshmallow import ValidationError
 from app.models import MenuItem
 from app.extensions import db
+from app.schemas.menu_item_schema import MenuItemSchema
 
 menuitem_bp = Blueprint('menu_item', __name__)
+menuitem_schema = MenuItemSchema()
 
 @menuitem_bp.route('/', methods=['GET'])
 def get_cartdetails():
@@ -24,13 +27,19 @@ def get_cartdetails():
 def create_menuitem():
     """function to create new menuitem"""
     data = request.get_json()
+
+    try:
+        valid_data = menuitem_schema.load(data)
+    except ValidationError as err:
+        return (err.messages),4000
+
     new_menuitem = MenuItem (
-        resturant_id = data['resturant_id'],
-        name = data['name'],
-        description = data['description'],
-        price = data['price'],
-        image_url = data['image_url'],
-        is_available = data['is_available'],
+        resturant_id = valid_data['resturant_id'],
+        name = valid_data['name'],
+        description = valid_data['description'],
+        price = valid_data['price'],
+        image_url = valid_data['image_url'],
+        is_available = valid_data['is_available'],
 
     )
     db.session.add(new_menuitem)
