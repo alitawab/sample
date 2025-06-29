@@ -2,7 +2,7 @@
 from marshmallow import Schema, fields
 
 
-class UsersSchema(Schema): 
+class UsersSchema(Schema):
     """validate function for user"""
     user_id = fields.Int(dump_only=True)
     name = fields.Str(required=True)

@@ -1,11 +1,12 @@
+"""seed class to add data """
 from app import create_app
+from datetime import datetime
 from app.extensions import db
 from app.models import (
     User, Rider, Resturant, MenuItem,
     Address, Cart, CartDetails,
     Order, OrderDetails, DeliveryInfo
 )
-from datetime import datetime
 
 app = create_app()
 

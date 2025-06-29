@@ -1,8 +1,5 @@
+"""model for order details"""
 from app.extensions import db
-
-
-
-
 
 class OrderDetails(db.Model):
     """class for table order_details"""
@@ -18,4 +15,3 @@ class OrderDetails(db.Model):
     # Relationships
     order = db.relationship('Order', backref=db.backref('order_details', lazy=True))
     menu_item = db.relationship('MenuItem', backref=db.backref('order_details', lazy=True))
-
