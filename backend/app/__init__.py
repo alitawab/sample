@@ -4,12 +4,13 @@ import os
 from flask import Flask
 from dotenv import load_dotenv
 
-from app.api import register_routes
+from app.routes.url import register_routes
 
 from .config import Config
 from .extensions import db,cors,migrate,jwt
 from .models import *
 from .admin import init_admin
+from .routes.url import user_bp
 
 load_dotenv()
 

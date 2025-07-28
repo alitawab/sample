@@ -2,20 +2,25 @@
 from flask.views import MethodView
 from flask import request, jsonify
 from marshmallow import ValidationError
-from app.models import Address
-from app.extensions import db
 from app.schemas.address_schema import AddressSchema
-
+from app.services.address_service import (
+    get_all_addresses, get_address, create_address, update_address, delete_address
+)
 address_schema = AddressSchema()
 address_list_schema = AddressSchema(many=True)
 
 class AddressAPI(MethodView):
-    """api endpoint for address"""
-    def get(self):
-        """Get all addresses"""
-        addresses = Address.query.all()
-        result = address_list_schema.dump(addresses)
-        return jsonify(result), 200
+    
+    """view module class"""
+    def get(self, address_id=None):
+        """Get all  or a specific user by ID"""
+        if address_id:
+            address = get_address(address_id)
+            if not address:
+                return jsonify({'error': 'adddress not found'}), 404
+            return address_schema.dump(address),200
+        addresses = get_all_addresses()
+        return address_schema.dump(addresses), 200
 
     def post(self):
         """Create a new address"""
@@ -25,16 +30,24 @@ class AddressAPI(MethodView):
         except ValidationError as err:
             return jsonify(err.messages), 400
 
-        new_address = Address(
-            user_id=valid_data['user_id'],
-            street=valid_data['street'],
-            city=valid_data['city'],
-            state=valid_data['state'],
-            zip_code=valid_data['zip_code'],
-            longitude=valid_data['longitude'],
-            latitude=valid_data['latitude'],
-        )
-        db.session.add(new_address)
-        db.session.commit()
+        address = create_address(valid_data)
+        return address_schema.dump(address), 201
 
-        return jsonify({'message': 'Address created successfully'}), 201
+    def put(self, address_id):
+        """update address"""
+        address = get_address(address_id)
+        if not address:
+            return jsonify({'error':'address not found'}), 404
+
+        data = address_schema.load(request.json(), partial=True)
+        address= update_address(address, data)
+        return address_schema.dump(address), 200
+
+    def delete(self, address_id):
+        """delete address"""
+        address = get_address(address_id)
+        if not address:
+            return jsonify({'error': 'address not found'}), 404
+
+        delete_address(address)
+        return '', 204

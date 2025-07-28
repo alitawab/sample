@@ -1,27 +1,27 @@
+"""user view module"""
 from flask.views import MethodView
 from flask import request, jsonify
-from app.models import User
-from app.extensions import db
-from app.schemas.user_schema import UsersSchema
 from marshmallow import ValidationError
+
+from app.schemas.user_schema import UsersSchema
+from app.services.user_service import (
+    get_all_users, get_user, create_user, update_user, delete_user
+    )
 
 user_schema = UsersSchema()
 user_list_schema = UsersSchema(many=True)
 
 class UserAPI(MethodView):
+    """view module class"""
     def get(self, user_id=None):
         """Get all users or a specific user by ID"""
-        if user_id is None:
-            users = User.query.all()
-            result = user_list_schema.dump(users)
-            return jsonify(result), 200
-
-        user = User.query.get(user_id)
-        if not user:
-            return jsonify({'error': 'User not found'}), 404
-
-        result = user_schema.dump(user)
-        return jsonify(result), 200
+        if user_id:
+            user = get_user(user_id)
+            if not user:
+                return jsonify({'error': 'User not found'}), 404
+            return user_schema.dump(user),200
+        users = get_all_users()
+        return user_schema.dump(users), 200
 
     def post(self):
         """Create a new user"""
@@ -31,15 +31,24 @@ class UserAPI(MethodView):
         except ValidationError as err:
             return jsonify(err.messages), 400
 
-        new_user = User(
-            name=valid_data['name'],
-            email=valid_data['email'],
-            password=valid_data['password'],
-            phone=valid_data['phone']
-        )
+        user = create_user(valid_data)
+        return user_schema.dump(user), 201
 
-        db.session.add(new_user)
-        db.session.commit()
+    def put(self, user_id):
+        """update user"""
+        user = get_user(user_id)
+        if not user:
+            return jsonify({'error':'user not found'}), 404
 
-        return jsonify({'message': 'User created success'})
+        data = user_schema.load(request.json(), partial=True)
+        user= update_user(user, data)
+        return user_schema.dump(user), 200
 
+    def delete(self, user_id):
+        """delete user"""
+        user = get_user(user_id)
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+
+        delete_user(user)
+        return '', 204

@@ -1,19 +1,27 @@
+"""rider view module"""
 from flask.views import MethodView
 from flask import request, jsonify
 from marshmallow import ValidationError
-from app.models import Rider
-from app.extensions import db
+
 from app.schemas.rider_schema import RiderSchema
+from app.services.rider_service import (
+    get_all_riders, get_rider, create_rider, update_rider, delete_rider
+)
 
 rider_schema = RiderSchema()
 rider_list_schema = RiderSchema(many=True)
 
 class RiderAPI(MethodView):
-    def get(self):
+    """view module class"""
+    def get(self, rider_id=None):
         """Get all riders"""
-        riders = Rider.query.all()
-        result = rider_list_schema.dump(riders)
-        return jsonify(result), 200
+        if rider_id:
+            rider=get_rider(rider_id)
+            if not rider:
+                return jsonify({'error': 'Rider not found'}), 404
+            return rider_schema.dump(rider),200
+        riders = get_all_riders()
+        return rider_schema.dump(riders) , 200
 
     def post(self):
         """Create a new rider"""
@@ -23,16 +31,23 @@ class RiderAPI(MethodView):
         except ValidationError as err:
             return jsonify(err.messages), 400
 
-        new_rider = Rider(
-            name=valid_data['name'],
-            phone=valid_data['phone'],
-            vehicle_type=valid_data['vehicle_type'],
-            current_location_lat=valid_data['current_location_lat'],
-            current_location_lng=valid_data['current_location_lng'],
-            is_available=valid_data['is_available'],
-        )
+        rider = create_rider(valid_data)
+        return rider_schema.dump(rider),201
 
-        db.session.add(new_rider)
-        db.session.commit()
+    def put (self, rider_id):
+        """Update rider"""
+        rider = get_rider(rider_id)
+        if not rider:
+            return jsonify({'error':'rider not found'}),404
 
-        return jsonify({'message': 'Rider created successfully'}), 201
+        data = rider_schema.load(request.json(), partial=True)
+        rider = update_rider(rider, data)
+        return rider_schema.dump(rider),200
+
+    def delete(self, rider_id):
+        """delete rider"""
+        rider = get_rider(rider_id)
+        if not rider:
+            return jsonify({'error':'rider not found'}), 404
+        delete_rider(rider)
+        return '', 204

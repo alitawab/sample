@@ -1,19 +1,27 @@
+"""resturant view module"""
 from flask.views import MethodView
 from flask import request, jsonify
 from marshmallow import ValidationError
-from app.models import Resturant
-from app.extensions import db
+
 from app.schemas.resturant_schema import ResturantSchema
+from app.services.resturant_service import (
+    get_all_resturants, get_resturant, create_resturant, update_resturant, delete_resturant
+)
 
 resturant_schema = ResturantSchema()
 resturant_list_schema = ResturantSchema(many=True)
 
 class ResturantAPI(MethodView):
-    def get(self):
+    """view module resturant"""
+    def get(self, resturant_id=None):
         """Get all restaurants"""
-        resturants = Resturant.query.all()
-        result = resturant_list_schema.dump(resturants)
-        return jsonify(result), 200
+        if resturant_id:
+            resturant = get_resturant(resturant_id)
+            if not resturant:
+                return jsonify({'error': 'Resturant not found'}), 404
+            return resturant_schema.dump(resturant), 200
+        resturants = get_all_resturants()
+        return resturant_schema.dump(resturants),200
 
     def post(self):
         """Create a new restaurant"""
@@ -22,17 +30,24 @@ class ResturantAPI(MethodView):
             valid_data = resturant_schema.load(data)
         except ValidationError as err:
             return jsonify(err.messages), 400
+        resturant = create_resturant(valid_data)
+        return resturant_schema.dump(resturant), 201
 
-        new_resturant = Resturant(
-            name=valid_data['name'],
-            address=valid_data['address'],
-            logo_url=valid_data['logo_url'],
-            phone=valid_data['phone'],
-            rating=valid_data['rating'],
-            open_hours=valid_data['open_hours'],
-        )
+    def put(self, resturant_id):
+        """Update restaurant"""
+        resturant = get_resturant(resturant_id)
+        if not resturant:
+            return jsonify({'error': 'Resturant not found'}), 404
 
-        db.session.add(new_resturant)
-        db.session.commit()
+        data = resturant_schema.load(request.json(), partial=True)
+        resturant = update_resturant(resturant, data)
+        return resturant_schema.dump(resturant), 200
 
-        return jsonify({'message': 'Restaurant created successfully'}), 201
+    def delete(self, resturant_id):
+        """Delete restaurant"""
+        resturant = get_resturant(resturant_id)
+        if not resturant:
+            return jsonify({'error': 'Resturant not found'}), 404
+
+        delete_resturant(resturant)
+        return '', 204
