@@ -2,8 +2,16 @@
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from .extensions import db
-from .models import Address, CartDetails,Cart,DeliveryInfo,MenuItem,OrderDetails,Order,Resturant,Rider,User
-
+from .models.address import Address
+from .models.cart_details import CartDetails
+from .models.cart import Cart
+from .models.delivery_info import DeliveryInfo
+from .models.menu_item import MenuItem
+from .models.order_details import OrderDetails
+from .models.order import Order
+from .models.resturant import Resturant
+from .models.rider import Rider
+from .models.user import User
 
 admin = Admin(name="Admin Dashboard", template_mode="bootstrap3")
 

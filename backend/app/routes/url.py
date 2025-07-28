@@ -40,9 +40,14 @@ rider_view = RiderAPI.as_view('rider_api')
 rider_bp.add_url_rule('',defaults={'rider_id':None}, view_func=rider_view, methods=['GET'])
 
 user_view = UserAPI.as_view('user_api')
-user_bp.add_url_rule('',defaults={'user_id',None}, view_func=user_view, methods=['GET'])
+user_bp.add_url_rule('',defaults={'user_id':None}, view_func=user_view, methods=['GET'])
+user_bp.add_url_rule('/',defaults={'user_id':None}, view_func=user_view, methods=['GET'])
+
 user_bp.add_url_rule('', view_func=user_view, methods=['POST'])
+user_bp.add_url_rule('/', view_func=user_view, methods=['POST'])
+
 user_bp.add_url_rule('/<int:user_id>', view_func=user_view, methods=['GET','PUT','DELETE'])
+user_bp.add_url_rule('/<int:user_id>/', view_func=user_view, methods=['GET','PUT','DELETE'])
 
 
 def register_routes(app):

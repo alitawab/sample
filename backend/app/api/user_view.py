@@ -21,7 +21,7 @@ class UserAPI(MethodView):
                 return jsonify({'error': 'User not found'}), 404
             return user_schema.dump(user),200
         users = get_all_users()
-        return user_schema.dump(users), 200
+        return user_list_schema.dump(users), 200
 
     def post(self):
         """Create a new user"""
