@@ -8,7 +8,7 @@ class CartDetails(db.Model):
     cartdetails_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     cart_id = db.Column(db.Integer, db.ForeignKey('cart.cart_id'), nullable=False)
     menuitem_id = db.Column(db.Integer, nullable=False)
-    quantity = db.Column(db.String(45), nullable=False)
+    quantity = db.Column(db.String(255), nullable=False)
 
     # Relationship to cart
     cart = db.relationship('Cart', backref=db.backref('cart_details', lazy=True))

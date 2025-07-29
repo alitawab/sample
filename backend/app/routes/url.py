@@ -11,6 +11,8 @@ from app.api.order_view import OrderAPI
 from app.api.resturant_view import ResturantAPI
 from app.api.rider_view import RiderAPI
 from app.api.user_view import UserAPI
+from app.api.auth_view import LoginAPI, RegisterAPI
+
 
 
 address_bp = Blueprint('address_bp', __name__, url_prefix='/address')
@@ -23,6 +25,7 @@ order_bp = Blueprint('order_bp', __name__, url_prefix='/order')
 resturant_bp = Blueprint('resturant_bp',__name__,url_prefix='/resturant')
 rider_bp = Blueprint('rider_bp', __name__, url_prefix='/rider')
 user_bp = Blueprint('user_bp',__name__,url_prefix='/user')
+auth_bp = Blueprint('auth_bp', __name__, url_prefix='/auth')
 
 
 address_view = AddressAPI.as_view('address_api')
@@ -49,6 +52,10 @@ user_bp.add_url_rule('/', view_func=user_view, methods=['POST'])
 user_bp.add_url_rule('/<int:user_id>', view_func=user_view, methods=['GET','PUT','DELETE'])
 user_bp.add_url_rule('/<int:user_id>/', view_func=user_view, methods=['GET','PUT','DELETE'])
 
+login_view = LoginAPI.as_view('login_api')
+register_view = RegisterAPI.as_view('register_api')
+auth_bp.add_url_rule('/login', view_func=login_view, methods=['POST'])
+auth_bp.add_url_rule('/register', view_func=register_view, methods=['POST'])
 
 def register_routes(app):
     """function to register routes"""
@@ -62,3 +69,4 @@ def register_routes(app):
     app.register_blueprint(resturant_bp, url_prefix='/resturant')
     app.register_blueprint(rider_bp, url_prefix='/rider')
     app.register_blueprint(user_bp, url_prefix='/user')
+    app.register_blueprint(auth_bp, url_prefix='/auth')

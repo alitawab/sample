@@ -21,7 +21,7 @@ def create_app():
 
     db.init_app(app)
     migrate.init_app(app,db)
-    cors.init_app(app)
+    cors.init_app(app,supports_credentials=True)
     init_admin(app)
 
     register_routes(app)

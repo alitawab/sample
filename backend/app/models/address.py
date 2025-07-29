@@ -12,10 +12,10 @@ class Address(db.Model):
         'user.user_id',
         ondelete='RESTRICT',
         onupdate='RESTRICT'),nullable=False)
-    street = db.Column(db.String(45), nullable=False)
-    city = db.Column(db.String(45), nullable=False)
-    state = db.Column(db.String(45), nullable=False)
-    zip_code = db.Column(db.String(45), nullable=False)
+    street = db.Column(db.String(255), nullable=False)
+    city = db.Column(db.String(255), nullable=False)
+    state = db.Column(db.String(255), nullable=False)
+    zip_code = db.Column(db.String(255), nullable=False)
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
 

@@ -8,10 +8,10 @@ class MenuItem(db.Model):
 
     menuitem_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     resturant_id = db.Column(db.Integer, db.ForeignKey('resturant.resturant_id'), nullable=False)
-    name = db.Column(db.String(45), nullable=False)
-    description = db.Column(db.String(45), nullable=False)
+    name = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.String(255), nullable=False)
     price = db.Column(db.Float, nullable=False)
-    image_url = db.Column(db.String(45), nullable=False)
+    image_url = db.Column(db.String(255), nullable=False)
     is_available = db.Column(db.Boolean, nullable=False)
 
     # Relationship to restaurant

@@ -8,7 +8,7 @@ class User(db.Model):
     __tablename__ = 'user'  # Using capitalized table name as per your schema
 
     user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(45), nullable=False)
-    email = db.Column(db.String(45), nullable=False, unique=True)
-    password = db.Column(db.String(45), nullable=False)
-    phone = db.Column(db.String(45), nullable=False)
+    name = db.Column(db.String(255), nullable=False)
+    email = db.Column(db.String(255), nullable=False, unique=True)
+    password = db.Column(db.String(255), nullable=False)
+    phone = db.Column(db.String(255), nullable=False)

@@ -12,7 +12,7 @@ class Order(db.Model):
     rider_id = db.Column(db.Integer, db.ForeignKey('rider.rider_id'), nullable=True)
     resturant_id = db.Column(db.Integer, db.ForeignKey('resturant.resturant_id'), nullable=False)
     total_price = db.Column(db.Float, nullable=False)
-    status = db.Column(db.String(45), nullable=False)
+    status = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False)
 
     # Relationships
