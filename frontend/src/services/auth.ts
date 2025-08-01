@@ -11,13 +11,9 @@ export const login = async (payload: {
     return response.data;
     }
 
-export const registerUser = async (data: {
-    name:string
-    email: string
-    phone: string
-    password: string
-
-}) => {
-    const res = await api.post('/auth/register', data);
+export const registerUser = async (data: FormData)  => {
+    const res = await api.post('/auth/register', data,{
+        headers:{"Content-Type": "multipart/form-data"},
+    });
     return res.data;
 }

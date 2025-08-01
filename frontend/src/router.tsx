@@ -4,30 +4,28 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import PrivateRoute from "./components/PrivateRoute";
 import Register from "./pages/Register";
+import ResturantPage from "./pages/ResturantPage";
+import MenuItem from "./pages/MenuItem";
+import ResturantDashboard from "./pages/ResturantDashboard";
 
 
 export const router = createBrowserRouter([
-    {
-        path: '/login',
-        element: <Login />,
-    },
-    {
-        path: '/register',
-        element: <Register />,
-    },
-    {
+    { 
         path: '/',
-        element:(
-            <PrivateRoute>
-                <MainLayout />
-            </PrivateRoute>
-    ),
-    children: [
-        {
-            index: true,
-            element: <Home />,
-        },
-
-    ],
-    },
+        element: <MainLayout />,
+        children: [
+            { index:true, element:<Home /> },
+            { path: '/home', element: <Home /> },
+            { path: '/login',element: <Login /> },
+            { path: '/register',element: <Register /> },
+            { path: '/resturant/:id', element: <ResturantPage /> },
+            { path: '/item/:id' ,element: <MenuItem /> },
+            { path: '/resturant/dashboard', element:
+                (
+                    <PrivateRoute requiredRole="resturant">
+                        <ResturantDashboard />
+                    </PrivateRoute>
+                )
+            }
+    ]},
 ])

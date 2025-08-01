@@ -9,3 +9,4 @@ class UsersSchema(Schema):
     email = fields.Email(required=True)
     password = fields.Str(required=True, load_only=True)
     phone = fields.Str(required=True)
+    role = fields.Str(required=False)

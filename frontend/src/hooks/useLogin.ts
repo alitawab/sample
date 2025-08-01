@@ -3,6 +3,7 @@ import toast from "react-hot-toast"
 import { login as loginRequest} from "../services/auth"
 import { useAuth } from "../store/auth"
 import { useNavigate } from "react-router-dom"
+import { getResturantByUserId } from "../services/resturant"
 
 
 export const useLogin = () => {
@@ -10,11 +11,18 @@ export const useLogin = () => {
     const navigate = useNavigate();
     return useMutation({
         mutationFn: loginRequest,
-        onSuccess: (data) => {
-            toast.success("Login Successful")
-            console.log('Login response:', data)
+        onSuccess: async (data) => {
+            const role = data.user.role;
+            if(role === "user") navigate('/home');
+            else if(role === "resturant") {
+                const resturant = await getResturantByUserId(data.user.user_id)
+                data.user.resturant_id = resturant.resturant_id;
+                navigate('/resturant/dashboard')
+            }
+            else if(role === "rider") navigate('/rider/dashboard')
+            
             login(data)
-            navigate('/');
+            toast.success("Login Successful")
         },
         onError: (error:any) => {
             toast.error(error.response?.data?.message || "Login Failed")

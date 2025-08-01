@@ -12,3 +12,7 @@ class User(db.Model):
     email = db.Column(db.String(255), nullable=False, unique=True)
     password = db.Column(db.String(255), nullable=False)
     phone = db.Column(db.String(255), nullable=False)
+    role = db.Column(db.String(20), nullable=False)
+
+
+    resturant = db.relationship("Resturant", back_populates="user", uselist=False)

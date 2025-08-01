@@ -32,6 +32,7 @@ class UserAPI(MethodView):
             return jsonify(err.messages), 400
 
         user = create_user(valid_data)
+        print (user.role)
         return user_schema.dump(user), 201
 
     def put(self, user_id):

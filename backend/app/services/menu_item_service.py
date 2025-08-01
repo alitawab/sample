@@ -11,6 +11,10 @@ def get_menu_item(menu_item_id):
     """get menu_item"""
     return MenuItem.query.get(menu_item_id)
 
+def get_menu_item_by_resturant_id(resturant_id):
+    """get menu_item by resturant id"""
+    return MenuItem.query.filter_by(resturant_id=resturant_id).all()
+
 def create_menu_item(data):
     """create menu_item"""
     menu_item = MenuItem(**data)

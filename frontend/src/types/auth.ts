@@ -1,9 +1,11 @@
 
 export interface User {
-    id: number
+    user_id: number
+    resturant_id:number
     name: string
     email: string
-    role: string
+    phone: string
+    role: 'user'| 'rider' | 'resturant'
 }
 
 export interface LoginResponse {
