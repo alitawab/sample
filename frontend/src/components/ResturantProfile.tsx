@@ -103,8 +103,8 @@ export default function RestaurantProfile({resturant_id}:{resturant_id:number}) 
           <p><strong>Tags:</strong> {restaurant.tags}</p>
 
           <div className="mt-6 flex gap-4">
-            <button onClick={handleEditClick} className="btn btn-info">Edit</button>
-            <button onClick={handleDelete} className="btn btn-error">Delete</button>
+            <button onClick={handleEditClick} className="btn btn-outline btn-info">Edit</button>
+            <button onClick={handleDelete} className="btn btn-outline btn-error">Delete</button>
           </div>
         </>
       ) : (

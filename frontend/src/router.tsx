@@ -7,12 +7,16 @@ import Register from "./pages/Register";
 import ResturantPage from "./pages/ResturantPage";
 import MenuItem from "./pages/MenuItem";
 import ResturantDashboard from "./pages/ResturantDashboard";
+import ErrorPage from "./components/ErrorPage";
+import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
 
 
 export const router = createBrowserRouter([
     { 
         path: '/',
         element: <MainLayout />,
+        errorElement:<ErrorPage />,
         children: [
             { index:true, element:<Home /> },
             { path: '/home', element: <Home /> },
@@ -26,6 +30,8 @@ export const router = createBrowserRouter([
                         <ResturantDashboard />
                     </PrivateRoute>
                 )
-            }
+            },
+            { path: '/cart', element: <Cart /> },
+            { path: '/checkout', element: <Checkout />}
     ]},
 ])

@@ -1,10 +1,12 @@
 import { useParams } from "react-router-dom";
 import { useMenuItemById } from "../hooks/useMenuItem"
+import { useCart } from "../store/cart";
 
 
 export default function MenuItem () {
     const {id} = useParams();
     const { data, isLoading, isError } = useMenuItemById(id);
+    const { addToCart } = useCart();
 
     if(isLoading) return <div className="text-center mt-100">Item Loading...</div>
     if(isError) return <div className="text-center mt-100">Error Loading Item</div>
@@ -15,8 +17,18 @@ export default function MenuItem () {
             <h1 className="text-3xl font-bold mb-2">{data.name}</h1>
             <p className="text-gray-700 mb-4">{data.description}</p>
             <p className="text-lg font-semibold mb-2">Rs - {data.price}</p>
-            <p className="btn bg-indigo-500 w-40">Add To Cart</p>
-            <p className={`text-sm ${data.is_available ? 'text-green-600' : 'text-red-600'}`}>
+            <button 
+            onClick={() => addToCart({
+                id: data.menuitem_id,
+                resturantId: data.resturant_id,
+                name: data.name,
+                price: data.price,
+                quantity: 1
+            })}
+            className="btn btn-sm mt-2 btn-primary">
+                Add To Cart
+            </button>
+            <p className={`text-sm mt-2 ${data.is_available ? 'text-green-600' : 'text-red-600'}`}>
                 {data.is_available ? 'Available':'Not-Available'}
             </p>
             
