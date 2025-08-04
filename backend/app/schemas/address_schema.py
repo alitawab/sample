@@ -6,7 +6,7 @@ class AddressSchema(Schema):
     """validate function for address"""
 
     address_id = fields.Int(dump_only=True)
-    user_id = fields.Int(required=True)
+    user_id = fields.Int(required=False, allow_none=True)
     street = fields.Str(required=True)
     city = fields.Str(required=True)
     state = fields.Str(required=True)

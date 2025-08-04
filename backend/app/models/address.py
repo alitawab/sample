@@ -11,7 +11,7 @@ class Address(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey(
         'user.user_id',
         ondelete='RESTRICT',
-        onupdate='RESTRICT'),nullable=False)
+        onupdate='RESTRICT'),nullable=True)
     street = db.Column(db.String(255), nullable=False)
     city = db.Column(db.String(255), nullable=False)
     state = db.Column(db.String(255), nullable=False)

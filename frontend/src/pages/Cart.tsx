@@ -16,7 +16,7 @@ export default function Cart() {
             ):(
                 <div className="space-y-6">
                     {cartItems.map(item => (
-                        <div key={item.id} className="flex item-center justify-between border-b pb-2">
+                        <div key={item.menuitem_id} className="flex item-center justify-between border-b pb-2">
                             <div>
                                 <h4 className="text-lg font-semibold">{item.name}</h4>
                                 <p className="text-sm text-gray-600">Rs - {item.price.toFixed(2)}</p>
@@ -26,11 +26,11 @@ export default function Cart() {
                                 type="number"
                                 value={item.quantity}
                                 min={1}
-                                onChange={(e) => {updateQuantity(item.id,parseInt(e.target.value) || 1)}}
+                                onChange={(e) => {updateQuantity(item.menuitem_id,parseInt(e.target.value) || 1)}}
                                 className="w-16 border rounded px-2 py-1 text-center" 
                                 />
                                 <button
-                                onClick={() => removeFromCart(item.id)}
+                                onClick={() => removeFromCart(item.menuitem_id)}
                                 className="text-red-500 hover:text-red-700 text-xl">
                                     ✖
                                 </button>

@@ -1,4 +1,4 @@
-import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { addMenuItem, deleteMenuItem, getMenuItemById, getMenuItemByResturantId, getMenuItems, updateMenuItem } from "../services/menuitem"
 import toast from "react-hot-toast"
 

@@ -1,8 +1,7 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
 
 interface CartItem {
-    id:number;
-    resturantId:number;
+    menuitem_id:number;
     name:string;
     price:number;
     quantity:number;
@@ -11,7 +10,7 @@ interface CartCtx {
     cartItems: CartItem[];
     resturantId: number|null;
     cartCount: number;
-    addToCart: (item:CartItem) => void;
+    addToCart: (item:CartItem, resturant_id: number) => void;
     removeFromCart: (id:number) => void;
     updateQuantity: (id:number, qty:number) => void;
     clearCart: () => void;
@@ -33,25 +32,25 @@ export const CartProvider = ({ children }: { children : ReactNode}) => {
 
     const cartCount = cartItems.reduce((sum, item) => sum + item.quantity,0);
     
-    const addToCart = (item: CartItem) => {
+    const addToCart = (item: CartItem, itemResturantId: number) => {
         if(cartItems.length ==0){
-            setResturantId(item.resturantId);
-            localStorage.setItem("resturantId", item.resturantId.toString())
+            setResturantId(itemResturantId);
+            localStorage.setItem("resturantId", itemResturantId.toString())
             setCartItems([{...item, quantity:1}]);
             return;
         }
 
-        if(item.resturantId !== resturantId) {
+        if(itemResturantId !== resturantId) {
             alert("You can only add items from one resturant at a time. Please clear your cart first.");
             return;
         }
 
         setCartItems(prev => {
-            const existing = prev.find(i => i.id === item.id);
+            const existing = prev.find(i => i.menuitem_id === item.menuitem_id);
             let newCart;
             if(existing) {
                 newCart = prev.map(i => 
-                    i.id === item.id ? {...i, quantity : i.quantity + 1} : i
+                    i.menuitem_id === item.menuitem_id ? {...i, quantity : i.quantity + 1} : i
                 );
             } else {
                 newCart = [...prev, {...item, quantity:1}];
@@ -63,7 +62,7 @@ export const CartProvider = ({ children }: { children : ReactNode}) => {
 
     const removeFromCart = (id: number) => {
         setCartItems(prev => {
-            const newCart = prev.filter(item => item.id !== id)
+            const newCart = prev.filter(item => item.menuitem_id !== id)
             localStorage.setItem("cartitem",JSON.stringify(newCart))
             return newCart
         });
@@ -72,7 +71,7 @@ export const CartProvider = ({ children }: { children : ReactNode}) => {
     const updateQuantity = (id: number, qty: number) => {
         setCartItems(prev => {
             const newCart = prev.map(item =>
-                item.id === id ? {...item, quantity: qty}: item
+                item.menuitem_id === id ? {...item, quantity: qty}: item
             );
             localStorage.setItem("cartitem",JSON.stringify(newCart));
             return newCart;

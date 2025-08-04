@@ -44,7 +44,12 @@ menuitem_bp.add_url_rule('/resturant/<int:resturant_id>', view_func=menuitem_by_
 
 #this is the route for order details
 orderdetails_view = OrderDetailsAPI.as_view('orderdetails_api')
+
+#this is the route for order
 order_view = OrderAPI.as_view('order_api')
+order_bp.add_url_rule('',defaults={'order_id':None}, view_func=order_view, methods=['GET'])
+order_bp.add_url_rule('',view_func=order_view, methods=['POST'])
+order_bp.add_url_rule('/<int:order_id>', view_func=order_view, methods=['GET','PUT','DELETE'])
 
 # this is the route for resturant
 resturant_view = ResturantAPI.as_view('resturant_api')

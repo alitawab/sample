@@ -8,17 +8,24 @@ class OrderItemSchema(Schema):
     quantity = fields.Int(required=True)
     unit_price = fields.Float(required=True)
 
+class OrderAddressSchema(Schema):
+    """funtion to validata order address"""
+    id = fields.Int(required=True)
+    text = fields.Str(required=True)
+    latitude = fields.Float(required=True)
+    longitude = fields.Float(required=True)
 
 class OrderSchema(Schema):
     """function to validata order"""
     order_id = fields.Int(dump_only=True)
-    user_id = fields.Int(required=True)
-    address_id = fields.Int(required=True)
-    rider_id = fields.Int(required=False)
+    user_id = fields.Int(required=False,allow_none=True)
+    address = fields.Nested(OrderAddressSchema,required=True)
+    rider_id = fields.Int(required=False, allow_none=True)
     resturant_id = fields.Int(required=True)
     total_price = fields.Float(required=True)
-    stauts = fields.Str(required=True)
+    status = fields.Str(required=True)
     created_at = fields.DateTime(required=True)
+    payment_method = fields.Str(required=True)
     items = fields.List(fields.Nested(OrderItemSchema),required=True)
 
 @validates_schema

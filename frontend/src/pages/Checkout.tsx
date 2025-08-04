@@ -1,30 +1,54 @@
 import { useState } from "react";
 import PaymentModal from "../components/PaymentModal";
-import toast from "react-hot-toast";
 import { useCart } from "../store/cart";
 import AddressModal from "../components/AddressModal";
-import { useNavigate } from "react-router-dom";
+import { useOrder } from "../hooks/useOrder";
+import type { Address, CreateOrderPayload } from "../types/order";
+import { useAuth } from "../store/auth";
 
 
 export default function Checkout() {
-    const { cartItems, clearCart } = useCart();
+    const { cartItems, resturantId, clearCart } = useCart();
+    const { user } = useAuth();
 
-    const [ selectedAddress, setSelectedAddress ] = useState<{id:number; text:string;} |null>(null);
+    const [ selectedAddress, setSelectedAddress ] = useState<Address | null>(null);
     const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
     
     const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
     const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
 
+    const {mutate, isPending} = useOrder();
+
 
     const total = cartItems.reduce((sum,i) => sum + i.price * i.quantity, 0)
-    const navigate = useNavigate();
 
     const handleComplete = () => {
-        toast("Order Placed");
+        if (!selectedAddress || !paymentMethod) {
+            alert("Please select both address and payment method.");
+            return;
+        }
+        console.log(cartItems);
+        const payload: CreateOrderPayload = {
+            user_id: user?.user_id ?? null,
+            address: selectedAddress,
+            resturant_id: resturantId,
+            rider_id:null,
+            total_price:total,
+            status: 'Pending',
+            created_at:new Date().toISOString(),
+            payment_method: paymentMethod,
+            items: cartItems.map(item =>({
+                menuitem_id:item.menuitem_id,
+                quantity:item.quantity,
+                unit_price:item.price,
+            })),
+
+        }
         clearCart();
         setSelectedAddress(null);
         setPaymentMethod(null);
-        navigate('/');
+        mutate(payload);
+
     }
 
     const handleConfirmPayment = () => {
@@ -48,7 +72,7 @@ export default function Checkout() {
             
             <div className="space-y-6 mb-20">
                 {cartItems.map(item => (
-                    <div key={item.id} className="flex item-center justify-between border-b pb-2">
+                    <div key={item.menuitem_id} className="flex item-center justify-between border-b pb-2">
                         <div>
                             <h4 className="text-lg font-semibold">{item.name}</h4>
                             <p className="text-sm text-gray-600">{item.price.toFixed(2)}</p>
@@ -93,6 +117,19 @@ export default function Checkout() {
                     )}
                     {selectedAddress && paymentMethod && (
                         <button onClick={handleComplete} className="btn btn-primary w-full">Place Order</button>
+                    )}
+                    {isPending && (
+                        <div className="fixed inset-0 flex flex-col items-center justify-center z-50"
+                        style={{ backgroundImage:"url('/bg1.jpg')"}}>
+                            <div className="bg-white p-6 flex flex-col items-center">
+                                <div className="relative w-32 h-32 mb-4">
+                                    <div className="absolute left-0 animate-scoot w-32 h-32 bg-contain bg-no-repeat" style={{
+                                    backgroundImage: `url('/scooter.png')`, // place scooter icon in public folder
+                                    }} />
+                                </div>
+                                <p className="text-lg font-medium text-gray-700">Placing your order...</p>
+                            </div>
+                        </div>
                     )}
                 </div>
                 <PaymentModal 

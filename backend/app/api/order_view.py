@@ -27,9 +27,11 @@ class OrderAPI(MethodView):
     def post(self):
         """Create a new order"""
         data = request.get_json()
+
         try:
             valid_data = order_schema.load(data)
         except ValidationError as err:
+            print(err.messages)
             return jsonify(err.messages), 400
 
         order = create_order(valid_data)

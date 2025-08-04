@@ -19,12 +19,11 @@ export default function MenuItem () {
             <p className="text-lg font-semibold mb-2">Rs - {data.price}</p>
             <button 
             onClick={() => addToCart({
-                id: data.menuitem_id,
-                resturantId: data.resturant_id,
+                menuitem_id: data.menuitem_id,
                 name: data.name,
                 price: data.price,
                 quantity: 1
-            })}
+            },data.resturant_id)}
             className="btn btn-sm mt-2 btn-primary">
                 Add To Cart
             </button>

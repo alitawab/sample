@@ -6,7 +6,7 @@ import { MapContainer, Marker, TileLayer, useMap, useMapEvents } from "react-lea
 interface AddressModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSave: (address: {id: number, text:string}) => void;
+    onSave: (address: {id: number, text:string, latitude:number, longitude:number}) => void;
 }
 
 const markerIcon = new L.Icon({
@@ -43,12 +43,19 @@ export default function AddressModal ({isOpen, onClose, onSave }: AddressModalPr
         setForm({...form, [e.target.name]: e.target.value})
     }
 
-    const isValid = form.house && form.street && form.area;
+    const isValid = form.house && form.street && form.area && position!==null;
     
     const handleSave = () => {
-        const fullAddress = `${form.house},${form.street},${form.area}`;
-        onSave({id:Date.now(), text: fullAddress});
+        if(!position) {alert("Please select a location for delivery"); return;}
+        const fullAddress = `House No. ${form.house}, Street No. ${form.street}, Area. ${form.area}`;
+        onSave({
+            id:Date.now(),
+            text: fullAddress,
+            latitude: position[0],
+            longitude: position[1],
+        });
         setForm({house:"",street:"",area:""});
+        onClose();
     };
 
         useEffect(() => {
@@ -64,6 +71,9 @@ export default function AddressModal ({isOpen, onClose, onSave }: AddressModalPr
                 },
                 { enableHighAccuracy:true }
             );
+        } else{
+            setPosition(null);
+            setForm({house:"",street:"",area:""})
         }
     },[isOpen])
 

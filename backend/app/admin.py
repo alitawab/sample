@@ -30,6 +30,18 @@ class RestaurantAdmin(ModelView):
     ]
     column_display_pk = True
 
+class OrderAdmin(ModelView):
+    """class for resturant view"""
+    form_columns = [
+        'order_id', 'user_id', 'address_id', 'rider_id',
+        'resturant_id', 'total_price', 'status', 'payment_method', 'created_at'
+    ]
+    column_list = [
+        'order_id', 'user_id', 'address_id', 'rider_id',
+        'resturant_id', 'total_price', 'status', 'payment_method', 'created_at'
+    ]
+    column_display_pk = True
+
 class RiderAdmin(ModelView):
     """class for rider view"""
     form_columns = [
@@ -54,17 +66,40 @@ class MenuItemAdmin(ModelView):
     ]
     column_display_pk = True
 
+class OrderDetailsAdmin(ModelView):
+    """class for resturant view"""
+    form_columns = [
+        'orderdetails_id', 'order_id', 'menuitem_id', 'quantity',
+        'unit_price'
+    ]
+    column_list = [
+        'orderdetails_id', 'order_id', 'menuitem_id', 'quantity',
+        'unit_price'
+    ]
+    column_display_pk = True
+    
+class AddressAdmin(ModelView):
+    """class for resturant view"""
+    form_columns = [
+        'address_id', 'user_id', 'street', 'city',
+        'state','zip_code','latitude','longitude'
+    ]
+    column_list = [
+        'address_id', 'user_id', 'street', 'city',
+        'state','zip_code','latitude','longitude'
+    ]
+    column_display_pk = True
 
 def init_admin(app):
     """initialize function for admin dashboard"""
     admin.init_app(app)
-    admin.add_view(ModelView(Address, db.session))
+    admin.add_view(AddressAdmin(Address, db.session))
     admin.add_view(ModelView(CartDetails, db.session))
     admin.add_view(ModelView(Cart,db.session))
     admin.add_view(ModelView(DeliveryInfo,db.session))
     admin.add_view(MenuItemAdmin(MenuItem, db.session))
-    admin.add_view(ModelView(OrderDetails, db.session))
-    admin.add_view(ModelView(Order, db.session))
+    admin.add_view(OrderDetailsAdmin(OrderDetails, db.session))
+    admin.add_view(OrderAdmin(Order, db.session))
     admin.add_view(RestaurantAdmin(Resturant, db.session))
     admin.add_view(RiderAdmin(Rider, db.session))
     admin.add_view(ModelView(User, db.session))
