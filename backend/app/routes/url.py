@@ -7,7 +7,7 @@ from app.api.cart_view import CartAPI
 from app.api.delivery_info_view import DeliveryInfoAPI
 from app.api.menu_item_view import MenuItemAPI, MenuItemByResturantApi
 from app.api.order_details_view import OrderDetailsAPI
-from app.api.order_view import OrderAPI
+from app.api.order_view import OrderAPI, OrderStatusApi
 from app.api.resturant_view import ResturantAPI, ResturantByUserApi
 from app.api.rider_view import RiderAPI
 from app.api.user_view import UserAPI
@@ -50,6 +50,10 @@ order_view = OrderAPI.as_view('order_api')
 order_bp.add_url_rule('',defaults={'order_id':None}, view_func=order_view, methods=['GET'])
 order_bp.add_url_rule('',view_func=order_view, methods=['POST'])
 order_bp.add_url_rule('/<int:order_id>', view_func=order_view, methods=['GET','PUT','DELETE'])
+
+order_status_view = OrderStatusApi.as_view('order_status_api')
+order_bp.add_url_rule('/status',view_func=order_status_view, methods=['GET'])
+
 
 # this is the route for resturant
 resturant_view = ResturantAPI.as_view('resturant_api')

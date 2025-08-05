@@ -2,7 +2,7 @@ import { useState } from "react";
 import PaymentModal from "../components/PaymentModal";
 import { useCart } from "../store/cart";
 import AddressModal from "../components/AddressModal";
-import { useOrder } from "../hooks/useOrder";
+import { useOrderCreate } from "../hooks/useOrder";
 import type { Address, CreateOrderPayload } from "../types/order";
 import { useAuth } from "../store/auth";
 
@@ -17,7 +17,7 @@ export default function Checkout() {
     const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
     const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
 
-    const {mutate, isPending} = useOrder();
+    const {mutate, isPending} = useOrderCreate();
 
 
     const total = cartItems.reduce((sum,i) => sum + i.price * i.quantity, 0)

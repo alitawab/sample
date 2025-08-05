@@ -33,8 +33,6 @@ class RestaurantAdmin(ModelView):
 class OrderAdmin(ModelView):
     """class for resturant view"""
     form_columns = [
-        'order_id', 'user_id', 'address_id', 'rider_id',
-        'resturant_id', 'total_price', 'status', 'payment_method', 'created_at'
     ]
     column_list = [
         'order_id', 'user_id', 'address_id', 'rider_id',

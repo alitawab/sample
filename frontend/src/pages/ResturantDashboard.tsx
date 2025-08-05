@@ -3,6 +3,7 @@ import { useAuth } from "../store/auth";
 import { useState } from "react";
 import MenuManager from "../components/MenuManager";
 import ResturantProfile from "../components/ResturantProfile";
+import OrderManager from "../components/OrderManager";
 
 
 export default function ResturantDashboard() {
@@ -29,9 +30,17 @@ export default function ResturantDashboard() {
                 >
                     Menu Item
                 </button>
+                <button
+                className={`btn ${activeTab === "orders" ? "btn-primary": "btn-outline"}`}
+                onClick={() => setActiveTab("orders")}
+                >
+                    Pending Orders
+                </button>
             </div>
             {activeTab ==="profile" && <ResturantProfile resturant_id = {user.resturant_id}/>}
             {activeTab === "menu" && <MenuManager resturant_id = {user.resturant_id}/>}
+            {activeTab === "orders" && <OrderManager resturant_id = {user.resturant_id}/>}
+            
         </div>
     )
 }

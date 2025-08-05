@@ -5,11 +5,31 @@ from marshmallow import ValidationError
 
 from app.schemas.order_schema import OrderSchema
 from app.services.order_service import (
-    get_all_orders, get_order, create_order, update_order, delete_order
+    get_all_orders, get_order, get_order_by_status, create_order, update_order, delete_order
 )
 
 order_schema = OrderSchema()
 order_list_schema = OrderSchema(many=True)
+
+class OrderStatusApi(MethodView):
+    """class for order status view"""
+    def get(self):
+        """get function"""
+        pending_orders = get_order_by_status(status="Pending")
+        return order_list_schema.dump(pending_orders), 200
+
+    def put(self,order_id):
+        """function to update status"""
+        data = request.get_json()
+        status = data.get("status")
+        if not status:
+            return jsonify({"error":"status not found"}),404
+        order = get_order(order_id)
+        if not order:
+            return jsonify({"error":"Order not found"}),404
+
+        update_order_status = update_order(order,{"status":status})
+        return order_schema.dump(update_order_status),200
 
 
 class OrderAPI(MethodView):
@@ -22,7 +42,7 @@ class OrderAPI(MethodView):
                 return jsonify ({'error':'order not found'}), 404
             return order_schema.dump(order), 200
         orders = get_all_orders()
-        return order_schema.dump(orders), 200
+        return order_list_schema.dump(orders), 200
 
     def post(self):
         """Create a new order"""
@@ -43,7 +63,7 @@ class OrderAPI(MethodView):
         order = get_order(order_id)
         if not order:
             return jsonify({'error': 'order not found'}), 404
-        data = order_schema.load(request.json(), partial= True)
+        data = order_schema.load(request.get_json(), partial= True)
         order = update_order(order, data)
         return order_schema.dump(order), 200
 

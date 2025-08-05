@@ -14,6 +14,10 @@ def get_order(order_id):
     """get order"""
     return Order.query.get(order_id)
 
+def get_order_by_status(status):
+    """get order by status"""
+    return Order.query.filter_by(status = status).all()
+
 def create_order(data):
     """create order"""
     address_data = data.pop('address')
