@@ -11,6 +11,19 @@ export interface Address {
     longitude: number;
 }
 
+export interface Order {
+  order_id: number;
+  status: string;
+  total_price: number;
+  payment_method: string;
+  restaurant_id: number;
+  rider_id?: number;
+  location: {
+    lat: number;
+    lng: number;
+  };
+}
+
 export interface CreateOrderPayload {
     user_id: number|null;
     address: Address;

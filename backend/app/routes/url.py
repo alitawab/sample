@@ -7,9 +7,9 @@ from app.api.cart_view import CartAPI
 from app.api.delivery_info_view import DeliveryInfoAPI
 from app.api.menu_item_view import MenuItemAPI, MenuItemByResturantApi
 from app.api.order_details_view import OrderDetailsAPI
-from app.api.order_view import OrderAPI, OrderStatusApi
+from app.api.order_view import OrderAPI, OrderStatusApi, OrderResturantApi, OrderRiderApi
 from app.api.resturant_view import ResturantAPI, ResturantByUserApi
-from app.api.rider_view import RiderAPI
+from app.api.rider_view import RiderAPI, RiderByUserApi
 from app.api.user_view import UserAPI
 from app.api.auth_view import LoginAPI, RegisterAPI
 
@@ -54,6 +54,12 @@ order_bp.add_url_rule('/<int:order_id>', view_func=order_view, methods=['GET','P
 order_status_view = OrderStatusApi.as_view('order_status_api')
 order_bp.add_url_rule('/status',view_func=order_status_view, methods=['GET'])
 
+order_resturant_view = OrderResturantApi.as_view('order_resturant_api')
+order_bp.add_url_rule('/resturant',view_func=order_resturant_view, methods=['GET'])
+
+order_rider_view = OrderRiderApi.as_view('order_rider_api')
+order_bp.add_url_rule('/rider',view_func=order_rider_view, methods=['GET'])
+
 
 # this is the route for resturant
 resturant_view = ResturantAPI.as_view('resturant_api')
@@ -67,6 +73,10 @@ resturant_bp.add_url_rule('/user/<int:user_id>',view_func=resturant_by_user_view
 #this the route for rider
 rider_view = RiderAPI.as_view('rider_api')
 rider_bp.add_url_rule('',defaults={'rider_id':None}, view_func=rider_view, methods=['GET'])
+rider_bp.add_url_rule('/<int:rider_id>',view_func=rider_view,methods=['GET','PUT','DELETE'])
+
+rider_by_user_view = RiderByUserApi.as_view('rider_by_user_api')
+rider_bp.add_url_rule('/user/<int:rider_id>', view_func=rider_by_user_view, methods=['GET'])
 
 # this is the route for user
 user_view = UserAPI.as_view('user_api')

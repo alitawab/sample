@@ -47,7 +47,7 @@ class RiderAdmin(ModelView):
         'current_location_lat', 'current_location_lng', 'is_available'
     ]
     column_list = [
-        'rider_id','name', 'phone','vehicle_type',
+        'rider_id','name', 'phone','vehicle_type', 'license_number',
         'current_location_lat', 'current_location_lng', 'is_available'
     ]
     column_display_pk = True

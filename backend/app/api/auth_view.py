@@ -41,7 +41,7 @@ class RegisterAPI(MethodView):
         """function for register user"""
         data = request.form.to_dict()
         image = request.files.get('image')
-
+        print(data)
         if image:
             filename = secure_filename(image.filename)
             image_path = os.path.join(UPLOAD_FOLDER,filename)
@@ -49,7 +49,7 @@ class RegisterAPI(MethodView):
             image_url = f'/static/uploads/resturants/{filename}'
         else:
             image_url = ''
-            
+
         user_data = {
             "name":data.get("name"),
             "email":data.get("email"),
@@ -74,7 +74,6 @@ class RegisterAPI(MethodView):
             phone=valid_data["phone"],
             role=valid_data["role"]
         )
-        print(valid_data)
         db.session.add(new_user)
         db.session.commit()
 
@@ -90,16 +89,18 @@ class RegisterAPI(MethodView):
                 tags=data.get("tags"),
                 open_hours=data.get("open_hours"),
                 )
-            print(resturant)
             db.session.add(resturant)
             db.session.commit()
             return jsonify({"message": "Resturant registered successfully"}), 201
 
+        print(valid_data)
         if new_user.role == 'rider':
             rider = Rider (
-                name="Sample",
-                phone="Sample",
-                vehicle_type="Sample",
+                user_id=new_user.user_id,
+                name=valid_data["name"],
+                phone=valid_data["phone"],
+                vehicle_type=data.get("vehicle_type"),
+                license_number= data.get("license_number"),
                 current_location_lat=0.0,
                 current_location_lng=0.0,
                 is_available=True,

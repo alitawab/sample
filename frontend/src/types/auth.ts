@@ -1,7 +1,7 @@
 
 export interface User {
     user_id: number
-    resturant_id:number
+    role_id:number
     name: string
     email: string
     phone: string

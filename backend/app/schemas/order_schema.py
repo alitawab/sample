@@ -23,7 +23,7 @@ class OrderSchema(Schema):
     rider_id = fields.Int(required=False, allow_none=True)
     resturant_id = fields.Int(required=True)
     total_price = fields.Float(required=True)
-    status = fields.Str(required=True)
+    status = fields.Str(required=False)
     created_at = fields.DateTime(required=True)
     payment_method = fields.Str(required=True)
     items = fields.List(fields.Nested(OrderItemSchema),required=True)

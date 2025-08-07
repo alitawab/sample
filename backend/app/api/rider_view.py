@@ -5,11 +5,22 @@ from marshmallow import ValidationError
 
 from app.schemas.rider_schema import RiderSchema
 from app.services.rider_service import (
-    get_all_riders, get_rider, create_rider, update_rider, delete_rider
+    get_all_riders, get_rider, get_rider_by_user_id, create_rider, update_rider, delete_rider
 )
 
 rider_schema = RiderSchema()
 rider_list_schema = RiderSchema(many=True)
+
+class RiderByUserApi(MethodView):
+    """view model class"""
+    def get(self, rider_id):
+        """get rider by user id"""
+        rider = get_rider_by_user_id(rider_id)
+        if not rider:
+            return jsonify({'error': 'Rider not found'}), 404
+        return rider_schema.dump(rider), 200
+
+
 
 class RiderAPI(MethodView):
     """view module class"""

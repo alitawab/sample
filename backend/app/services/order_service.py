@@ -3,6 +3,7 @@ from app.models.order import Order
 from app.models.order_details import OrderDetails
 from app.models.address import Address
 from app.extensions import db
+from sqlalchemy import or_
 import requests
 
 
@@ -14,9 +15,37 @@ def get_order(order_id):
     """get order"""
     return Order.query.get(order_id)
 
-def get_order_by_status(status):
-    """get order by status"""
-    return Order.query.filter_by(status = status).all()
+def get_order_by_resturant(resturant_id):
+    """get order"""
+    return Order.query.filter(Order.resturant_id == resturant_id).all()
+
+
+def get_order_by_rider(rider_id):
+    """get order"""
+    return Order.query.filter(Order.rider_id == rider_id)
+
+
+def get_order_by_status(statuses,rider_id=None):
+    """Filter orders based on rider state"""
+    query = Order.query
+
+    if rider_id:
+        ongoing_order = Order.query.filter(
+            Order.rider_id == rider_id,
+            Order.status != "Delivered"
+        ).first()
+
+        if ongoing_order:
+            return [ongoing_order]
+        else:
+            query = query.filter(
+                Order.status.in_(statuses),
+                Order.status == "Accepted",
+                Order.rider_id.is_(None)
+            )
+            return query.all()
+
+    return []
 
 def create_order(data):
     """create order"""

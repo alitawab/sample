@@ -1,19 +1,21 @@
 import toast from "react-hot-toast";
-import { useOrderByResturant, useOrderUpdateStatus } from "../hooks/useOrder"
+import { useOrderByStatus, useOrderUpdateStatus } from "../hooks/useOrder"
 
 
 const nextStatusMap: Record<string, string | null> = {
-  Pending: "Accepted",
-  "Accepted": null,
-  "Assigned to Rider": "Preparing",
-  Preparing: "Ready for Pickup",
-  "Ready for Pickup": null,
-  "Out for Delivery": null,
+  Accepted: "Assigned to Rider",
+  "Ready for Pickup": "Out for Delivery",
+  "Out for Delivery": "Delivered",
+  Pending: null,
+  "Assigned to Rider": null,
+  Preparing: null,
   Delivered: null,
 };
 
-export default function OrderManager({resturant_id}:{resturant_id:number}) {
-    const {data:orders=[], isLoading} = useOrderByResturant(resturant_id);
+const riderHandledStatuses = ["Accepted","Assigned to Rider", "Ready for Pickup", "Out for Delivery"];
+
+export default function RiderOrderManager({rider_id}:{rider_id:number}) {
+    const {data:orders=[], isLoading} = useOrderByStatus(riderHandledStatuses,rider_id);
 
     const { mutate:updateStatus } = useOrderUpdateStatus();
 
@@ -23,14 +25,19 @@ export default function OrderManager({resturant_id}:{resturant_id:number}) {
             toast.error("No further action avilable");
             return;
         }
-        updateStatus({order_id, nextStatus})
+
+        if (status === "Accepted") {
+            updateStatus({order_id, nextStatus, rider_id})
+        } else {
+            updateStatus({order_id,nextStatus})
+        }
     }
 
     return (
         <div>
-            <h2 className="text-xl font-semibold mb-4">Pending Orders</h2>
+            <h2 className="text-xl font-semibold mb-4">Orders</h2>
             {orders.length === 0 ? (
-                <p>No Pending Orders</p>
+                <p>No Orders</p>
             ):(
                 <ul className="space-y-4">
                     {orders.map((order:any) => (
@@ -40,11 +47,8 @@ export default function OrderManager({resturant_id}:{resturant_id:number}) {
                             <p><strong>Payment:</strong>{order.payment_method.toUpperCase()}</p>
                             <p><strong>Order Status:</strong>{order.status}</p>
                             {nextStatusMap[order.status] && (
-                                <button 
-                                onClick={() => updateOrderStatusHandler(order.order_id, order.status)}
-                                disabled={order.status === "Rider Assigned" && !order.rider_id}
-                                className="btn btn-sm btn-success mt-2">
-                                    Mark as : {nextStatusMap[order.status]}
+                                <button onClick={() => updateOrderStatusHandler(order.order_id, order.status)} className="btn btn-sm btn-success mt-2">
+                                    {order.status === "Accepted" ? "Accept Delivery" : `Mark as : ${nextStatusMap[order.status]}`}
                                 </button>
 
                             )}

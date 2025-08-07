@@ -1,22 +1,21 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../store/auth";
 import { useState } from "react";
-import MenuManager from "../components/MenuManager";
-import ResturantProfile from "../components/ResturantProfile";
-import OrderManager from "../components/OrderManager";
+import RiderProfile from "../components/RiderProfile";
+import RiderOrderManager from "../components/RiderOrderManager";
 
 
-export default function ResturantDashboard() {
+export default function RiderDashboard() {
     const {user} = useAuth()
     const [activeTab, setActiveTab]= useState("profile")
 
-    if(!user || user.role!== "resturant") {
+    if(!user || user.role!== "rider") {
         return <Navigate to="/login" replace />;
     }
 
     return (
         <div className="p-4 max-w-4xl mx-auto">
-            <h1 className="text-2xl font-bold mb-4">Resturant Dashboard</h1>
+            <h1 className="text-2xl font-bold mb-4">Rider Dashboard</h1>
             <div className="flex gap-4 mb-6">
                 <button
                 className={`btn ${activeTab === "profile" ? "btn-primary":"btn-outline"}`}
@@ -25,22 +24,21 @@ export default function ResturantDashboard() {
                     Profile
                 </button>
                 <button
-                className={`btn ${activeTab === "menu" ? "btn-primary": "btn-outline"}`}
-                onClick={() => setActiveTab("menu")}
+                className={`btn ${activeTab === "activityLog" ? "btn-primary": "btn-outline"}`}
+                onClick={() => setActiveTab("activityLog")}
                 >
-                    Menu Item
+                    Activity Log
                 </button>
                 <button
                 className={`btn ${activeTab === "orders" ? "btn-primary": "btn-outline"}`}
                 onClick={() => setActiveTab("orders")}
                 >
-                    Pending Orders
+                    Check New Orders
                 </button>
             </div>
-            {activeTab ==="profile" && <ResturantProfile resturant_id = {user.role_id}/>}
-            {activeTab === "menu" && <MenuManager resturant_id = {user.role_id}/>}
-            {activeTab === "orders" && <OrderManager resturant_id = {user.role_id}/>}
-            
+            {activeTab ==="profile" && <RiderProfile rider_id = {user.role_id}/>}
+            {/* {activeTab === "activityLog" && <ActivityLog rider_id = {user.role_id}/>} */}
+            {activeTab === "orders" && <RiderOrderManager rider_id = {user.role_id}/>}
         </div>
     )
 }

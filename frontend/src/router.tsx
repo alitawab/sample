@@ -10,6 +10,7 @@ import ResturantDashboard from "./pages/ResturantDashboard";
 import ErrorPage from "./components/ErrorPage";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
+import RiderDashboard from "./pages/RiderDashboard";
 
 
 export const router = createBrowserRouter([
@@ -28,6 +29,13 @@ export const router = createBrowserRouter([
                 (
                     <PrivateRoute requiredRole="resturant">
                         <ResturantDashboard />
+                    </PrivateRoute>
+                )
+            },
+            { path:'/rider/dashboard', element:
+                (
+                    <PrivateRoute>
+                        <RiderDashboard />
                     </PrivateRoute>
                 )
             },

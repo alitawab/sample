@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { createOrder, getOrder, getPendingOrders, updateOrderStatus } from "../services/order";
+import { createOrder, getOrder, updateOrderStatus, getOrderByStatus, getOrderByResturant } from "../services/order";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import type { CreateOrderPayload } from "../types/order";
@@ -23,20 +23,27 @@ export const useOrderCreate = () => {
 }
 
 export const useOrder = () => {
-  const queryClient = useQueryClient();
-
   return useQuery({
     queryKey:["orders"],
     queryFn: getOrder
   })
 }
-export const useOrderByStatus = () => {
-    const queryClient = useQueryClient();
 
-    return useQuery({
-        queryKey:["orders"],
-        queryFn: getPendingOrders
-    })
+export const useOrderByResturant = (resturant_id:number) => {
+  
+  return useQuery({
+    queryKey:["orders"],
+    queryFn: () => getOrderByResturant(resturant_id)
+  })
+}
+
+
+export const useOrderByStatus = (statuses:string | string[], rider_id: number) => {
+  const queryKey = Array.isArray(statuses) ? statuses.join(","): statuses;
+  return useQuery({
+    queryKey:["orders","statuses",queryKey],
+    queryFn: () => getOrderByStatus(statuses,rider_id),
+  })
 
 }
 
@@ -44,7 +51,8 @@ export const useOrderUpdateStatus = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({order_id,nextStatus}:{order_id: number, nextStatus: string}) => updateOrderStatus(order_id,nextStatus),
+    mutationFn: ({order_id,nextStatus,rider_id}:{order_id: number, nextStatus: string,rider_id?:number}) => 
+      updateOrderStatus(order_id,nextStatus,rider_id),
     onSuccess: () => {
       toast.success("Order accepted!");
       queryClient.invalidateQueries({ queryKey: ["orders"] });

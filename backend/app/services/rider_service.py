@@ -11,6 +11,11 @@ def get_rider(rider_id):
     """get rider"""
     return Rider.query.get(rider_id)
 
+def get_rider_by_user_id(user_id):
+    """get resturant by user id """
+    return Rider.query.filter_by(user_id=user_id).first()
+
+
 def create_rider(data):
     """create rider"""
     rider = Rider(**data)

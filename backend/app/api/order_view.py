@@ -5,17 +5,43 @@ from marshmallow import ValidationError
 
 from app.schemas.order_schema import OrderSchema
 from app.services.order_service import (
-    get_all_orders, get_order, get_order_by_status, create_order, update_order, delete_order
+    get_all_orders, get_order, get_order_by_resturant, get_order_by_rider, get_order_by_status, create_order, update_order, delete_order
 )
 
 order_schema = OrderSchema()
 order_list_schema = OrderSchema(many=True)
 
+class OrderResturantApi(MethodView):
+    """class for order status view"""
+    def get(self):
+        """get function"""
+        resturant_id = request.args.get("resturant_id",type=int)
+
+        orders = get_order_by_resturant(resturant_id)
+        return order_list_schema.dump(orders), 200
+
+
+class OrderRiderApi(MethodView):
+    """class for order status view"""
+    def get(self):
+        """get function"""
+        rider_id = request.args.get("rider_id",type=int)
+
+        orders = get_order_by_rider(rider_id)
+        return order_list_schema.dump(orders), 200
+
+
 class OrderStatusApi(MethodView):
     """class for order status view"""
     def get(self):
         """get function"""
-        pending_orders = get_order_by_status(status="Pending")
+        statuses = request.args.getlist("status")
+        rider_id = request.args.get("rider_id",type=int)
+
+        if not statuses:
+            return jsonify({"error":"Status query error"}),400
+
+        pending_orders = get_order_by_status(statuses,rider_id)
         return order_list_schema.dump(pending_orders), 200
 
     def put(self,order_id):
@@ -61,10 +87,18 @@ class OrderAPI(MethodView):
     def put(self, order_id):
         """Update an order"""
         order = get_order(order_id)
+        json_data = request.get_json()
+
         if not order:
             return jsonify({'error': 'order not found'}), 404
-        data = order_schema.load(request.get_json(), partial= True)
-        order = update_order(order, data)
+
+        payload = json_data.get("payload", {}) if json_data else {}
+        allowed_keys = {'status','rider_id'}
+        data = {k: v for k, v in payload.items() if k in allowed_keys}
+
+        valid_data = order_schema.load(data, partial=True)
+
+        order = update_order(order, valid_data)
         return order_schema.dump(order), 200
 
 

@@ -18,7 +18,7 @@ export default function Register() {
         open_hours:'',
         //conditiona; fields for rider
         vehicle_type:'',
-        liscence_number:'',
+        license_number:'',
     })
 
     const {mutate, isPending} = useRegister();
@@ -56,7 +56,7 @@ export default function Register() {
       }
       if(form.role === 'rider'){
         formData.append('vehicle_type', form.vehicle_type);
-        formData.append('license_number', form.liscence_number);
+        formData.append('license_number', form.license_number);
   
       }
       mutate(formData)
@@ -88,7 +88,7 @@ export default function Register() {
         {form.role === 'rider' && (
           <>
           <input name="vehicle_type" type="text" placeholder="Vehicle Type" value={form.vehicle_type} onChange={handleChange} className="input input-bordered"/>
-          <input name="license_number" type="text" placeholder="License Number" value={form.liscence_number} onChange={handleChange} className="input input-bordered"/>
+          <input name="license_number" type="text" placeholder="License Number" value={form.license_number} onChange={handleChange} className="input input-bordered"/>
           </>
         )}
         <button type="submit" disabled={isPending} className="btn btn-primary">
