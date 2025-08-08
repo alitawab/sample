@@ -11,6 +11,8 @@ class Resturant(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.user_id"))
     name = db.Column(db.String(255), nullable=False)
     address = db.Column(db.String(255), nullable=False)
+    latitude = db.Column(db.Float, nullable=False)
+    longitude = db.Column(db.Float, nullable=False)
     logo_url = db.Column(db.String(255), nullable=False)
     phone = db.Column(db.String(255), nullable=False)
     rating = db.Column(db.Float, nullable=False)

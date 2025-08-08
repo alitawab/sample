@@ -105,7 +105,6 @@ export default function AddressModal ({isOpen, onClose, onSave }: AddressModalPr
                     <input name="house" type="text" placeholder="Enter House No." value={form.house} onChange={handleChange} className="input input-bordered w-full" />
                     <input name="street" type="text" placeholder="Enter Street No." value={form.street} onChange={handleChange} className="input input-bordered w-full" />
                     <input name="area" type="text" placeholder="Enter Area" value={form.area} onChange={handleChange} className="input input-bordered w-full" />
-                         
                 </div>
                 <div className="flex justify-end gap-3">
                     <button onClick={onClose} className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-500">Cancel</button>

@@ -21,11 +21,11 @@ admin = Admin(name="Admin Dashboard", template_mode="bootstrap3")
 class RestaurantAdmin(ModelView):
     """class for resturant view"""
     form_columns = [
-        'name', 'address', 'logo_url', 'phone',
+        'name', 'address','latitude','longitude', 'logo_url', 'phone',
         'rating', 'tags', 'open_hours', 'user_id'
     ]
     column_list = [
-        'resturant_id', 'name', 'user_id', 'address', 'logo_url', 'phone',
+        'resturant_id', 'name', 'user_id', 'address','latitude','longitude', 'logo_url', 'phone',
         'rating', 'tags', 'open_hours',
     ]
     column_display_pk = True
@@ -43,7 +43,7 @@ class OrderAdmin(ModelView):
 class RiderAdmin(ModelView):
     """class for rider view"""
     form_columns = [
-        'rider_id', 'name', 'phone','vehicle_type',
+        'name', 'phone','vehicle_type',
         'current_location_lat', 'current_location_lng', 'is_available'
     ]
     column_list = [

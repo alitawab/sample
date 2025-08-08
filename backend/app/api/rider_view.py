@@ -8,6 +8,7 @@ from app.services.rider_service import (
     get_all_riders, get_rider, get_rider_by_user_id, create_rider, update_rider, delete_rider
 )
 
+
 rider_schema = RiderSchema()
 rider_list_schema = RiderSchema(many=True)
 
@@ -51,7 +52,7 @@ class RiderAPI(MethodView):
         if not rider:
             return jsonify({'error':'rider not found'}),404
 
-        data = rider_schema.load(request.json(), partial=True)
+        data = rider_schema.load(request.get_json(), partial=True)
         rider = update_rider(rider, data)
         return rider_schema.dump(rider),200
 

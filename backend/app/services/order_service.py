@@ -1,10 +1,12 @@
 """order service"""
+from math import radians,sin,cos,asin,sqrt
+
 from app.models.order import Order
 from app.models.order_details import OrderDetails
 from app.models.address import Address
 from app.extensions import db
-from sqlalchemy import or_
 import requests
+from app.services.rider_service import get_rider
 
 
 def get_all_orders():
@@ -27,7 +29,6 @@ def get_order_by_rider(rider_id):
 
 def get_order_by_status(statuses,rider_id=None):
     """Filter orders based on rider state"""
-    query = Order.query
 
     if rider_id:
         ongoing_order = Order.query.filter(
@@ -37,15 +38,14 @@ def get_order_by_status(statuses,rider_id=None):
 
         if ongoing_order:
             return [ongoing_order]
-        else:
-            query = query.filter(
-                Order.status.in_(statuses),
-                Order.status == "Accepted",
-                Order.rider_id.is_(None)
-            )
-            return query.all()
+
+
+        return get_available_order_for_rider(rider_id, statuses)
 
     return []
+
+
+
 
 def create_order(data):
     """create order"""
@@ -97,6 +97,9 @@ def delete_order(order):
     db.session.delete(order)
     db.session.commit()
 
+def get_available_orders(status,rider_id=None):
+    """function to get available order"""
+    return Order.query.filter(status.in_(status), rider_id).all()
 
 # def accept_order(order_id):
 #     order = get_order(order_id)
@@ -157,3 +160,59 @@ def reverse_geocode(lat,lng):
         "state": data.get("state",""),
         "zip_code": data.get("postcode","")
     }
+
+def get_available_order_for_rider(rider_id, statuses, max_distance_km=5):
+    """function to get available rider close to resturant"""
+    rider = get_rider(rider_id)
+    if not rider:
+        return[]
+    available_orders = Order.query.filter(Order.status.in_(statuses), Order.rider_id.is_(None)).all()
+    filtered_orders = []
+
+    for order in available_orders:
+        print("Order", order)
+        rest_lat = order.resturant.latitude
+        rest_lng = order.resturant.longitude
+        print("Lat", rest_lat)
+
+        dist  = haversine_distance(
+            rider.current_location_lat, rider.current_location_lng, rest_lat, rest_lng
+            )
+
+        if dist <= max_distance_km:
+            filtered_orders.append(order)
+            # delivery_lat = order.address.latitude
+            # delivery_lng = order.address.longitude
+
+            # order_data = {
+            #     "order_id": order.order_id,
+            #     "total_price": order.total_price,
+            #     "resturant_name":order.resturant.name,
+            #     "resturant_distance_km": round(dist,2),
+            #     "delivery_location":{
+            #         "latitude":delivery_lat,
+            #         "longitude":delivery_lng
+            #         },
+            #     "payment_method":order.payment_method,
+            #     "status": order.status,
+            # }
+
+    print("filtered :",filtered_orders)
+
+    return filtered_orders
+
+
+def haversine_distance(lat1,lng1,lat2,lng2):
+    """function to calculat distance between rider and resturant"""
+    r = 6371 #Earth Radius
+
+    d_lat = radians(lat2-lat1)
+    d_lng = radians(lng2-lng1)
+    lat1 = radians(lat1)
+    lat2 = radians(lat2)
+
+    a = sin(d_lat/2) **2 + cos(lat1) * cos(lat2) *sin(d_lng/2)**2
+    c = 2*asin(sqrt(a))
+
+    return r * c
+

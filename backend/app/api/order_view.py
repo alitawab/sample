@@ -7,6 +7,7 @@ from app.schemas.order_schema import OrderSchema
 from app.services.order_service import (
     get_all_orders, get_order, get_order_by_resturant, get_order_by_rider, get_order_by_status, create_order, update_order, delete_order
 )
+from app.services.rider_service import get_rider,update_rider
 
 order_schema = OrderSchema()
 order_list_schema = OrderSchema(many=True)
@@ -20,17 +21,6 @@ class OrderResturantApi(MethodView):
         orders = get_order_by_resturant(resturant_id)
         return order_list_schema.dump(orders), 200
 
-
-class OrderRiderApi(MethodView):
-    """class for order status view"""
-    def get(self):
-        """get function"""
-        rider_id = request.args.get("rider_id",type=int)
-
-        orders = get_order_by_rider(rider_id)
-        return order_list_schema.dump(orders), 200
-
-
 class OrderStatusApi(MethodView):
     """class for order status view"""
     def get(self):
@@ -43,19 +33,6 @@ class OrderStatusApi(MethodView):
 
         pending_orders = get_order_by_status(statuses,rider_id)
         return order_list_schema.dump(pending_orders), 200
-
-    def put(self,order_id):
-        """function to update status"""
-        data = request.get_json()
-        status = data.get("status")
-        if not status:
-            return jsonify({"error":"status not found"}),404
-        order = get_order(order_id)
-        if not order:
-            return jsonify({"error":"Order not found"}),404
-
-        update_order_status = update_order(order,{"status":status})
-        return order_schema.dump(update_order_status),200
 
 
 class OrderAPI(MethodView):
@@ -97,6 +74,18 @@ class OrderAPI(MethodView):
         data = {k: v for k, v in payload.items() if k in allowed_keys}
 
         valid_data = order_schema.load(data, partial=True)
+
+        if "rider_id" in valid_data:
+            rider = get_rider(valid_data["rider_id"])
+            if rider:
+                update_rider(rider, {"is_available":False})
+
+
+        if valid_data.get("status") == "Delivered" and order.rider_id:
+            rider = get_rider(order.rider_id)
+            if rider:
+                update_rider(rider, {"is_available":True})
+
 
         order = update_order(order, valid_data)
         return order_schema.dump(order), 200
