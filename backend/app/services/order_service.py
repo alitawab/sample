@@ -1,11 +1,10 @@
 """order service"""
 from math import radians,sin,cos,asin,sqrt
-
+import requests
 from app.models.order import Order
 from app.models.order_details import OrderDetails
 from app.models.address import Address
 from app.extensions import db
-import requests
 from app.services.rider_service import get_rider
 
 
@@ -43,8 +42,6 @@ def get_order_by_status(statuses,rider_id=None):
         return get_available_order_for_rider(rider_id, statuses)
 
     return []
-
-
 
 
 def create_order(data):
@@ -97,44 +94,6 @@ def delete_order(order):
     db.session.delete(order)
     db.session.commit()
 
-def get_available_orders(status,rider_id=None):
-    """function to get available order"""
-    return Order.query.filter(status.in_(status), rider_id).all()
-
-# def accept_order(order_id):
-#     order = get_order(order_id)
-#     if order and order.status == OrderStatus.PENDING:
-#         order.status = OrderStatus.PREPARING
-#         db.session.commit()
-#     return order
-
-# def mark_ready(order_id):
-#     order = get_order(order_id)
-#     if order and order.status == OrderStatus.PREPARING:
-#         order.status = OrderStatus.READY_FOR_PICKUP
-#         db.session.commit()
-#     return order
-
-# def assign_rider(order_id, rider_id):
-#     order = get_order(order_id)
-#     if order and order.status == OrderStatus.PREPARING:
-#         order.rider_id = rider_id
-#         db.session.commit()
-#     return order
-
-# def pickup_order(order_id):
-#     order = get_order(order_id)
-#     if order and order.status == OrderStatus.READY_FOR_PICKUP:
-#         order.status = OrderStatus.OUT_FOR_DELIVERY
-#         db.session.commit()
-#     return order
-
-# def complete_order(order_id):
-#     order = get_order(order_id)
-#     if order and order.status == OrderStatus.OUT_FOR_DELIVERY:
-#         order.status = OrderStatus.COMPLETED
-#         db.session.commit()
-#     return order
 
 def reverse_geocode(lat,lng):
     """function to collect cuty zip code street from latitude and longitude"""
@@ -170,10 +129,9 @@ def get_available_order_for_rider(rider_id, statuses, max_distance_km=5):
     filtered_orders = []
 
     for order in available_orders:
-        print("Order", order)
         rest_lat = order.resturant.latitude
         rest_lng = order.resturant.longitude
-        print("Lat", rest_lat)
+
 
         dist  = haversine_distance(
             rider.current_location_lat, rider.current_location_lng, rest_lat, rest_lng
@@ -181,23 +139,6 @@ def get_available_order_for_rider(rider_id, statuses, max_distance_km=5):
 
         if dist <= max_distance_km:
             filtered_orders.append(order)
-            # delivery_lat = order.address.latitude
-            # delivery_lng = order.address.longitude
-
-            # order_data = {
-            #     "order_id": order.order_id,
-            #     "total_price": order.total_price,
-            #     "resturant_name":order.resturant.name,
-            #     "resturant_distance_km": round(dist,2),
-            #     "delivery_location":{
-            #         "latitude":delivery_lat,
-            #         "longitude":delivery_lng
-            #         },
-            #     "payment_method":order.payment_method,
-            #     "status": order.status,
-            # }
-
-    print("filtered :",filtered_orders)
 
     return filtered_orders
 
@@ -215,4 +156,3 @@ def haversine_distance(lat1,lng1,lat2,lng2):
     c = 2*asin(sqrt(a))
 
     return r * c
-

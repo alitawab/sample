@@ -30,7 +30,14 @@ auth_bp = Blueprint('auth_bp', __name__, url_prefix='/auth')
 
 address_view = AddressAPI.as_view('address_api')
 cartdetail_view = CartDetailsAPI.as_view('cartdetails_api')
+
+# this is the route for cart
 cart_view = CartAPI.as_view('cart_api')
+cart_bp.add_url_rule('', defaults={'cart_id': None}, view_func=cart_view,methods=['GET'])
+cart_bp.add_url_rule('', view_func=cart_view, methods=['POST'])
+
+
+
 deiveryinfo_view = DeliveryInfoAPI.as_view('deliveryinfo_api')
 
 # this is the route for menu item

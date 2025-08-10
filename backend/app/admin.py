@@ -88,12 +88,35 @@ class AddressAdmin(ModelView):
     ]
     column_display_pk = True
 
+
+
+class CartAdmin(ModelView):
+    """class for resturant view"""
+    form_columns = [
+        'cart_id', 'user_id', 'guest_token', 'status'
+    ]
+    column_list = [
+        'cart_id', 'user_id', 'guest_token', 'status'
+    ]
+    column_display_pk = True
+
+class CartDetailsAdmin(ModelView):
+    """class for resturant view"""
+    form_columns = [
+        'cartdetails_id', 'cart_id', 'menuitem_id', 'quantity'
+    ]
+    column_list = [
+        'cartdetails_id', 'cart_id', 'menuitem_id', 'quantity'
+    ]
+    column_display_pk = True
+
+
 def init_admin(app):
     """initialize function for admin dashboard"""
     admin.init_app(app)
     admin.add_view(AddressAdmin(Address, db.session))
-    admin.add_view(ModelView(CartDetails, db.session))
-    admin.add_view(ModelView(Cart,db.session))
+    admin.add_view(CartDetailsAdmin(CartDetails, db.session))
+    admin.add_view(CartAdmin(Cart,db.session))
     admin.add_view(ModelView(DeliveryInfo,db.session))
     admin.add_view(MenuItemAdmin(MenuItem, db.session))
     admin.add_view(OrderDetailsAdmin(OrderDetails, db.session))
